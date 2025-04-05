@@ -1,10 +1,11 @@
 const mongoose=require('mongoose');
 
-const reviewXWriterSchema=new mongoose.Schema({
+const reviewsOfUserSchema=new mongoose.Schema({
     userId:{
         type:mongoose.Schema.ObjectId,
         ref:'userInfo',
         required:true,
+        unique:true
 
     },
     reviews:[{
@@ -22,7 +23,7 @@ const reviewsOfMediaSchema=new mongoose.Schema({
         type:String,
         required:true
     },
-    content:[reviewXWriterSchema]
+    content:[reviewsOfUserSchema]
 })
 
 const userInfoSchema=new mongoose.Schema({
@@ -52,4 +53,4 @@ reviewsOfMediaSchema.index({mediaId:1,mediaType:1});
 const userInfoModel= mongoose.model('userInfo',userInfoSchema);
 const reviewsOfMediaModel= mongoose.model('reviewsOfMedia',reviewsOfMediaSchema);
 
-module.exports={userInfoModel,reviewsOfMediaModel}
+module.exports={userInfoModel,reviewsOfMediaModel,reviewsOfUserSchema}

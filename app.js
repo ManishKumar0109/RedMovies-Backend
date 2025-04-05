@@ -124,7 +124,6 @@ app.patch('/updateUser',userAuth,async(req,res,next)=>{
     }
 })
 
-
 app.patch('/updatePassword',userAuth,async(req,res,next)=>{
     const{oldPassword,newPassword}=req.body
     const {_id}=req.userData;
@@ -157,6 +156,53 @@ app.patch('/updatePassword',userAuth,async(req,res,next)=>{
         return next(error);
     }
 })
+
+
+app.post('/addReview',userAuth,async(req,res,next)=>{
+    const {mediaId,text,mediaType,rating}=req.body;
+    if (!mediaId || !text || !mediaType || rating == null || rating < 0 || rating > 10) {
+        return res.status(400).json({ message: "Missing required fields" });
+    }
+    try{
+    const userId=req.userData._id;
+    let mediaReviewDoc=await reviewsOfMediaModel.findOne({mediaId,mediaType});
+    if(!mediaReviewDoc){
+        mediaReviewDoc=await new reviewsOfMediaModel({mediaId,mediaType,content:[]});
+        mediaReviewDoc.content.push({userId:userId,reviews:[{text,rating}]})  
+    }
+    else{
+        let reviewbyuser = mediaReviewDoc.content.find(
+            (review) => review.userId.toString() === userId.toString()
+          );
+          
+        if(reviewbyuser){
+            reviewbyuser.reviews.push({text,rating});  
+        }
+        else{
+            mediaReviewDoc.content.push({userId:userId,reviews:[{text,rating}]});
+        }}
+    await mediaReviewDoc.save();
+    res.status(201).json({message:'successfully review added'});}
+    catch(err){
+        const error=new Error('Something went wrong');
+        error.statusCode=500;
+        next(error);
+    }
+})
+
+app.get('/getReviews',userAuth,async(req,res,next)=>{
+
+})
+
+
+
+
+
+
+
+
+
+
 
 
 dbConnection().then(()=>{
