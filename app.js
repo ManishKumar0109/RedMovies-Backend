@@ -10,6 +10,20 @@ const Validation = require('./Validation')
 
 const app=express();
 
+app.post('/logout',async(req,res,next)=>{
+    try{
+    res.clearCookie(token,{
+        httpOnly:true,
+        sameSite:'strict',
+        secure:process.env.NODE_ENV==='production'
+    })}
+    catch(err){
+        const error=new Error('Internal Server Error');
+        error.statusCode=500;
+        return next(error);
+    }
+})
+
 app.post('/signup',async(req,res,next)=>{
     const{emailId,password,name,avatar}=req.body
     const saltRounds=10;
