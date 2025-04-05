@@ -191,7 +191,23 @@ app.post('/addReview',userAuth,async(req,res,next)=>{
 })
 
 app.get('/getReviews',userAuth,async(req,res,next)=>{
-
+    
+    try{
+    const {mediaId,mediaType}=req.body;
+    const reviewofmedia=await reviewsOfMediaModel.findOne({mediaId,mediaType});
+    if(reviewofmedia.content.length<=0){
+        res.status(200).json({result:[]});
+    }
+    const reviewList = await Promise.all(
+        reviewofmedia.content.map((el) => el.populate('userId', 'name avatar'))
+    );
+    res.status(200).json({ result: reviewList });      
+   } 
+   catch(err){
+        const error=new Error('Something went wrong');
+        error.statusCode=500;
+        next(error);
+   }
 })
 
 
