@@ -10,7 +10,7 @@ const Validation = require('./Validation')
 
 const app=express();
 
-app.post('/logout',async(req,res,next)=>{
+app.post('/logout',userAuth,async(req,res,next)=>{
     try{
     res.clearCookie(token,{
         httpOnly:true,
@@ -90,6 +90,18 @@ app.post('/login',async(req,res,next)=>{
 
 })
 
+
+
+app.get('/getUserInfo',userAuth,async(req,res,next)=>{
+    try{
+    const userData=req.userData;
+    res.status(200).json({result:userData});}
+    catch(err){
+        const error=new Error('Internal Server Error');
+        error.statusCode=500;
+        return next(error);
+    }
+})
 
 
 
