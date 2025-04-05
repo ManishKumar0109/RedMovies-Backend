@@ -90,9 +90,7 @@ app.post('/login',async(req,res,next)=>{
 
 })
 
-
-
-app.get('/getUserInfo',userAuth,async(req,res,next)=>{
+app.get('/getUser',userAuth,async(req,res,next)=>{
     try{
     const userData=req.userData;
     res.status(200).json({result:userData});}
@@ -103,6 +101,62 @@ app.get('/getUserInfo',userAuth,async(req,res,next)=>{
     }
 })
 
+app.patch('/updateUser',userAuth,async(req,res,next)=>{
+    const{name,avatar,emailId}=req.body
+
+    const {_id}=req.userData;
+    
+    if(!emailId|| !name||!avatar||!Validation({emailId,name,avatar})){
+        const error=new Error('Invalid Credentials');
+        error.statusCode=400;
+        return next(error);
+    }
+    const cleanName = name.trim().replace(/\s+/g, ' ');
+
+    try{
+    const user=await userInfoModel.updateOne({_id:_id},{emailId,avatar,name:cleanName});
+    res.status(201).json({message:"successfullly update the profile"})}
+
+    catch(err){
+        const error=new Error('Internal Server Error');
+        error.statusCode=500;
+        return next(error);
+    }
+})
+
+
+app.patch('/updatePassword',userAuth,async(req,res,next)=>{
+    const{oldPassword,newPassword}=req.body
+    const {_id}=req.userData;
+    const saltRounds=10;
+    if (
+        !oldPassword ||
+        !newPassword ||
+        !Validation({ password: oldPassword }) ||
+        !Validation({ password: newPassword })
+      ) {
+        const error = new Error('Invalid Credentials');
+        error.statusCode = 400;
+        return next(error);
+      }
+    try{
+    const user=await userInfoModel.findOne({_id:_id});
+    const check=await bcrypt.compare(oldPassword,user.password);
+    if(!check){
+        const error=new Error('Invalid Password');
+        error.statusCode=400;
+        throw error;
+    }
+    const encryptedPassword=await bcrypt.hash(newPassword,saltRounds);
+    const userUpdated=await userInfoModel.updateOne({_id:_id},{password:encryptedPassword});
+    res.status(201).json({message:"successfullly update the password"})}
+
+    catch(err){
+        const error=new Error('Internal Server Error');
+        error.statusCode=500;
+        return next(error);
+    }
+})
 
 
 dbConnection().then(()=>{
