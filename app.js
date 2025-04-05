@@ -6,6 +6,7 @@ const userInfoModel=require('./models/Model');
 const jwt=require('jsonwebtoken');
 const userAuth = require('./userAuth');
 require('dotenv').config();
+const Validation = require('./Validation')
 
 const app=express();
 
@@ -13,11 +14,12 @@ app.post('/signup',async(req,res,next)=>{
     const{emailId,password,name,avatar}=req.body
     const saltRounds=10;
     
-    if(!Validation(emailId,password,name,avatar)){
+    if(!emailId|| !password|| !name||!avatar||!Validation({emailId,password,name,avatar})){
         const error=new Error('Invalid Credentials');
         error.statusCode=400;
         next(error);
     }
+    const cleanName = name.trim().replace(/\s+/g, ' ');
     try{
     const encryptedPassword=await bcrypt.hash(password,saltRounds);
     const check=await userInfoModel.findOne({emailId:emailId});
@@ -25,7 +27,7 @@ app.post('/signup',async(req,res,next)=>{
     if(check){
         return res.redirect('/login');
     }
-    const data=new userInfoModel({emailId,password:encryptedPassword,name,avatar});
+    const data=new userInfoModel({emailId,password:encryptedPassword,name:cleanName,avatar});
     await data.save();
     res.status(201).json({message:"SignUp successfull"});
 }
@@ -39,7 +41,7 @@ app.post('/signup',async(req,res,next)=>{
 app.post('/login',async(req,res,next)=>{
     try{
     const{emailId,password}=req.body;
-    if(!Validation(emailId,password)){
+    if(!email ||!password ||!Validation({emailId,password})){
         const error=new Error('Invalid Credentials');
         error.statusCode=400;
         return next(error);
