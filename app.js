@@ -4,6 +4,8 @@ const dbConnection=require('./models/dbConnection');
 const bcrypt = require('bcrypt');
 const userInfoModel=require('./models/Model');
 const jwt=require('jsonwebtoken');
+const userAuth = require('./userAuth');
+require('dotenv').config();
 
 const app=express();
 
