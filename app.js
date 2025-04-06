@@ -14,11 +14,11 @@ const app=express();
 app.use(express.json());
 app.use(cookieParser());
 
-// const corsConfig={
-//   origin: 'http://localhost:5173', //kind of whitelisting
-//   credentials:true
-// }
-// app.use(cors(corsConfig))
+const corsConfig={
+  origin: 'http://localhost:5173', //kind of whitelisting
+  credentials:true
+}
+app.use(cors(corsConfig))
 
 app.post('/logout',userAuth,async(req,res,next)=>{
     try{

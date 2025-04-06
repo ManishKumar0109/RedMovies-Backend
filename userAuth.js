@@ -1,5 +1,5 @@
 
-const userInfoModel=require('./models/Model');
+const {userInfoModel}=require('./models/Model');
 const jwt=require('jsonwebtoken');
 require('dotenv').config();
 
@@ -10,10 +10,8 @@ const userAuth = async (req, res, next) => {
       }
       const jwtToken = req.cookies.token;
       const decoded = jwt.verify(jwtToken, process.env.SECRET_KEY);
-  
       const userData = await userInfoModel.findOne({ _id: decoded.userId })
         .select('name avatar _id emailId');
-  
       if (!userData) {
         const error = new Error('User not found');
         error.statusCode = 404;
