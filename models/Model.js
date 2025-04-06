@@ -53,4 +53,4 @@ reviewsOfMediaSchema.index({mediaId:1,mediaType:1});
 const userInfoModel= mongoose.model('userInfo',userInfoSchema);
 const reviewsOfMediaModel= mongoose.model('reviewsOfMedia',reviewsOfMediaSchema);
 
-module.exports={userInfoModel,reviewsOfMediaModel,reviewsOfUserSchema}
+module.exports={userInfoModel,reviewsOfMediaModel}

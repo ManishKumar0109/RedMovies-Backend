@@ -2,17 +2,27 @@
 const express=require('express');
 const dbConnection=require('./models/dbConnection');
 const bcrypt = require('bcrypt');
-const userInfoModel=require('./models/Model');
+const {userInfoModel,reviewsOfMediaModel}=require('./models/Model');
 const jwt=require('jsonwebtoken');
 const userAuth = require('./userAuth');
 require('dotenv').config();
 const Validation = require('./Validation')
+const cookieParser=require('cookie-parser');
+const cors=require('cors');
 
 const app=express();
+app.use(express.json());
+app.use(cookieParser());
+
+// const corsConfig={
+//   origin: 'http://localhost:5173', //kind of whitelisting
+//   credentials:true
+// }
+// app.use(cors(corsConfig))
 
 app.post('/logout',userAuth,async(req,res,next)=>{
     try{
-    res.clearCookie(token,{
+    res.clearCookie('token',{
         httpOnly:true,
         sameSite:'strict',
         secure:process.env.NODE_ENV==='production'
@@ -25,23 +35,30 @@ app.post('/logout',userAuth,async(req,res,next)=>{
 })
 
 app.post('/signup',async(req,res,next)=>{
+
     const{emailId,password,name,avatar}=req.body
-    const saltRounds=10;
     
+    const saltRounds=10;
+
     if(!emailId|| !password|| !name||!avatar||!Validation({emailId,password,name,avatar})){
         const error=new Error('Invalid Credentials');
         error.statusCode=400;
         next(error);
     }
+ 
     const cleanName = name.trim().replace(/\s+/g, ' ');
+
     try{
     const encryptedPassword=await bcrypt.hash(password,saltRounds);
+    console.log(encryptedPassword);
     const check=await userInfoModel.findOne({emailId:emailId});
-
+  
     if(check){
-        return res.redirect('/login');
+        return res.status(409).json({ message: 'User already exists. Please login.' });
     }
+    
     const data=new userInfoModel({emailId,password:encryptedPassword,name:cleanName,avatar});
+
     await data.save();
     res.status(201).json({message:"SignUp successfull"});
 }
@@ -55,7 +72,7 @@ app.post('/signup',async(req,res,next)=>{
 app.post('/login',async(req,res,next)=>{
     try{
     const{emailId,password}=req.body;
-    if(!email ||!password ||!Validation({emailId,password})){
+    if(!emailId ||!password ||!Validation({emailId,password})){
         const error=new Error('Invalid Credentials');
         error.statusCode=400;
         return next(error);
@@ -210,14 +227,11 @@ app.get('/getReviews',userAuth,async(req,res,next)=>{
    }
 })
 
-
-
-
-
-
-
-
-
+app.use((err,req,res,next)=>{
+    const statusCode = err.statusCode || 500;  
+    const msg=err.message || "An unknown error occurred."
+    res.status(statusCode).json({message:statusCode});
+})
 
 
 
