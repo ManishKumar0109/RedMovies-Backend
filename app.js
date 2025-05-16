@@ -109,11 +109,12 @@ app.post("/login", async (req, res, next) => {
       expiresIn: "7d",
     })
     res.cookie("token", jwtToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      sameSite: "strict",
-    })
+  httpOnly: true,
+  secure: true,          // MUST be true for sameSite none
+  maxAge: 7 * 24 * 60 * 60 * 1000, 
+  sameSite: "none",      // allows cross-site cookies
+});
+
     res.status(201).json({ message: "login successfully" })
   } catch (err) {
     console.log(err.message)
