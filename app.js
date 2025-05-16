@@ -21,12 +21,13 @@ app.use(cors(corsConfig))
 
 app.post("/logout", userAuth, async (req, res, next) => {
   try {
-    res.cookie("token", jwtToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // or just true if deployed
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
-    })
+    res.cookie("token", "", {
+  httpOnly: true,
+  secure: true,
+  maxAge: 0,
+  sameSite: "none",
+});
+
 
     return res.status(200).json({ message: "Logged out successfully" }) // ✅ SEND RESPONSE
   } catch (err) {
