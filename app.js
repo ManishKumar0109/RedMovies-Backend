@@ -271,10 +271,10 @@ app.use((err, req, res, next) => {
   const msg = err.message || "An unknown error occurred."
   res.status(statusCode).json({ message: statusCode })
 })
-
+const Port = process.env.PORT || 4000
 dbConnection()
   .then(() => {
-    app.listen(3000, () => {
+    app.listen(Port, () => {
       console.log("babe your app is listening ....")
     })
   })
