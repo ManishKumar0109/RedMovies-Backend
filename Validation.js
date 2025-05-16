@@ -1,49 +1,46 @@
-const validator=require('validator');
+const validator = require("validator")
 
 const AvatarOptionsSrc = [
-    'boy1.webp',
-    'boy2.webp',
-    'boy3.webp',
-    'boy4.webp',
-    'boy5.webp',
-    'boy6.webp',
-    'boy7.webp',
-    'boy8.webp',
-    'boy9.webp',
-    'boy10.webp',
-    'girl1.webp',
-    'girl2.webp',
-    'girl3.webp',
-    'girl4.webp',
-    'girl5.webp',
-    'girl6.webp',
-    'girl7.webp',
-    'girl8.webp',
-    'girl9.webp',
-];
-const Validation=(el)=>{
-    const{emailId,password,name,avatar}=el;
-    
+  "boy1.avif",
+  "boy2.avif",
+  "boy3.avif",
+  "boy4.avif",
+  "boy5.avif",
+  "boy6.avif",
+  "boy7.avif",
+  "boy8.avif",
+  "boy9.avif",
+  "boy10.avif",
+  "girl1.avif",
+  "girl2.avif",
+  "girl3.avif",
+  "girl4.avif",
+  "girl5.avif",
+  "girl6.avif",
+  "girl7.avif",
+  "girl8.avif",
+  "girl9.avif",
+]
+const Validation = (el) => {
+  const { emailId, password, name, avatar } = el
 
-    if(emailId && !validator.isEmail(emailId)){
-        return false;
-    }
-    
-    if(password && !validator.isStrongPassword(password)){
-        return false;
-    }
-    
-    if (name && !/^[a-zA-Z-]+( [a-zA-Z-]+)*$/.test(name)) {
-        return false;
-    }
-    
-    if(avatar && !AvatarOptionsSrc.includes(avatar)){
-        return false;
-    }
-    
-    return true;
+  if (emailId && !validator.isEmail(emailId)) {
+    return false
+  }
 
-    
+  if (password && !validator.isStrongPassword(password)) {
+    return false
+  }
+
+  if (name && !/^[a-zA-Z-]+( [a-zA-Z-]+)*$/.test(name)) {
+    return false
+  }
+
+  if (avatar && !AvatarOptionsSrc.includes(avatar)) {
+    return false
+  }
+
+  return true
 }
 
-module.exports=Validation
+module.exports = Validation
