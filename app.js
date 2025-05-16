@@ -14,7 +14,7 @@ app.use(express.json())
 app.use(cookieParser())
 
 const corsConfig = {
-  origin: "http://localhost:5173",
+  origin: "https://redmovies-frontend.onrender.com",
   credentials: true,
 }
 app.use(cors(corsConfig))
