@@ -16,7 +16,7 @@ app.use(cookieParser())
 const corsConfig = {
   origin: [
     "https://redmovies-frontend.onrender.com",
-    "https://red-movies-frontend.vercel.app/",
+    "https://red-movies-frontend.vercel.app",
   ],
   credentials: true,
 }
