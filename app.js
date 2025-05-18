@@ -14,7 +14,10 @@ app.use(express.json())
 app.use(cookieParser())
 
 const corsConfig = {
-  origin: "https://redmovies-frontend.onrender.com",
+  origin: [
+    "https://redmovies-frontend.onrender.com",
+    "https://red-movies-frontend.vercel.app/",
+  ],
   credentials: true,
 }
 app.use(cors(corsConfig))
@@ -22,12 +25,11 @@ app.use(cors(corsConfig))
 app.post("/logout", userAuth, async (req, res, next) => {
   try {
     res.cookie("token", "", {
-  httpOnly: true,
-  secure: true,
-  maxAge: 0,
-  sameSite: "none",
-});
-
+      httpOnly: true,
+      secure: true,
+      maxAge: 0,
+      sameSite: "none",
+    })
 
     return res.status(200).json({ message: "Logged out successfully" }) // ✅ SEND RESPONSE
   } catch (err) {
@@ -109,11 +111,11 @@ app.post("/login", async (req, res, next) => {
       expiresIn: "7d",
     })
     res.cookie("token", jwtToken, {
-  httpOnly: true,
-  secure: true,          // MUST be true for sameSite none
-  maxAge: 7 * 24 * 60 * 60 * 1000, 
-  sameSite: "none",      // allows cross-site cookies
-});
+      httpOnly: true,
+      secure: true, // MUST be true for sameSite none
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      sameSite: "none", // allows cross-site cookies
+    })
 
     res.status(201).json({ message: "login successfully" })
   } catch (err) {
